@@ -1,0 +1,6 @@
+version:file "example_version.go"
+version:from_user
+
+git:create_tag $VERSION
+
+docker:create_tag "example/project", $VERSION

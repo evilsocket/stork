@@ -1,0 +1,4 @@
+$COMMAND = "echo test from $SHELL"
+
+shell:do "echo 'test with shell:do'"
+shell:do $COMMAND

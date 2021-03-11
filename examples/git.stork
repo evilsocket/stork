@@ -1,0 +1,8 @@
+# sets main version file and reads $VERSION
+version:file "example_version.go"
+
+# ask for a new version and update the version file
+version:from_user
+
+# add version file, commit, push and tag
+git:create_tag $VERSION
