@@ -54,9 +54,12 @@ func gitCreateTag(env *Environment, args ...string) error {
 	if output, err := cmd.CombinedOutput(); err == nil {
 		lines := strings.Split(str.Trim(string(output)), "\n")
 		for _, line := range lines {
-			if strings.Contains(line, "fix") {
+			lwrLine := strings.ToLower(line)
+			if strings.Contains(lwrLine, "merge pull request") {
+				continue
+			} else if strings.Contains(lwrLine, "fix") {
 				fixes = append(fixes, line)
-			} else if strings.Contains(line, "new") || strings.Contains(line, "add") {
+			} else if strings.Contains(lwrLine, "new") || strings.Contains(line, "add") {
 				features = append(features, line)
 			} else {
 				misc = append(misc, line)
