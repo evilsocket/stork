@@ -25,6 +25,16 @@ will build, tag and push the docker image for the project.
 
 More in the `examples` folder. For a complete list of commands [refer to the project wiki](https://github.com/evilsocket/stork/wiki/Commands).
 
+## Projects using Stork
+
+* stork :D
+* [bettercap](https://github.com/bettercap/bettercap)
+* [arc](https://github.com/evilsocket/arc)
+* [shieldwall](https://github.com/evilsocket/shieldwall)
+* [shellz](https://github.com/evilsocket/shellz)
+* [islazy](https://github.com/evilsocket/islazy)
+* [joe](https://github.com/evilsocket/joe)
+
 ## License
 
 Released under the GPL3 license.
