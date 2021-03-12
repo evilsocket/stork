@@ -1,0 +1,5 @@
+#!/usr/bin/env stork -f
+version:file "cmd/stork/version.go"
+version:from_user
+
+git:create_tag $VERSION

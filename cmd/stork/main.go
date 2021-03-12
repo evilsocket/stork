@@ -18,6 +18,7 @@ var (
 	fileName  = defFileName
 	workDir   = ""
 	dryRun    = false
+	showVersion = false
 	err       = (error)(nil)
 	theParser = (*parser.Parser)(nil)
 	theCode   = (*parser.AST)(nil)
@@ -32,10 +33,16 @@ func die(m string, args ...interface{}) {
 func init() {
 	flag.StringVar(&fileName, "f", fileName, "input .stork file")
 	flag.BoolVar(&dryRun, "dry-run", dryRun, "will print commands instead of executing them")
+	flag.BoolVar(&showVersion, "v", showVersion, "print version and exit")
 }
 
 func main() {
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("stork v%s\n", Version)
+		return
+	}
 
 	if fileName, err = filepath.Abs(fileName); err != nil {
 		die("%v\n", err)
