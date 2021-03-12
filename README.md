@@ -29,7 +29,7 @@ More in the `examples` folder.
 
 ### Shell
 
-`shell:do "<COMMAND>`
+`shell:do "<COMMAND>"`
 
 Execute a command with the current `$SHELL`.
 
