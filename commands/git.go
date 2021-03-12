@@ -19,9 +19,7 @@ func gitCreateTag(env *Environment, args ...string) error {
 	versionFile := env.Vars["VERSION_FILE"]
 	version := env.Vars["VERSION"]
 
-	if versionFile == "" {
-		return fmt.Errorf("VERSION_FILE not set")
-	} else if version == "" {
+	if version == "" {
 		return fmt.Errorf("VERSION not set")
 	}
 
@@ -102,12 +100,14 @@ func gitCreateTag(env *Environment, args ...string) error {
 
 	msg("git", "%s ...\n", txt)
 
-	if err = do(env.Dry, git, "add", versionFile); err != nil {
-		return err
-	} else if err = do(env.Dry, git, "commit", "-m", txt); err != nil {
-		// if version file didn't change, this will exit with code 1 ... just ignore
-	} else if err = do(env.Dry, git, "push"); err != nil {
-		return err
+	if versionFile != "" {
+		if err = do(env.Dry, git, "add", versionFile); err != nil {
+			return err
+		} else if err = do(env.Dry, git, "commit", "-m", txt); err != nil {
+			// if version file didn't change, this will exit with code 1 ... just ignore
+		} else if err = do(env.Dry, git, "push"); err != nil {
+			return err
+		}
 	}
 
 	// create new tag and push

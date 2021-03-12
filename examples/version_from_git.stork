@@ -1,0 +1,6 @@
+# initialize $VERSION from the current git tag
+version:from_git
+# ask a new version to the user
+version:from_user
+
+git:create_tag $VERSION
