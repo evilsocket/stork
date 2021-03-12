@@ -8,3 +8,6 @@ _build:
 
 clean:
 	@rm -rf _build
+
+install: stork
+	cp _build/stork ${GOPATH}/bin/
