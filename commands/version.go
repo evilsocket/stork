@@ -10,12 +10,17 @@ import (
 )
 
 var (
-	// TODO: make this more versatile
 	versionFileParser = regexp.MustCompile(`[Vv]ersion\s*=\s*['"]([\d\.ab]+)["']`)
 	versionParser = regexp.MustCompile(`\d+\.\d+(\.\d+[ab]?)?`)
 )
 
 func init() {
+	Available["version:parser"] = &Command{
+		Identifier: "version:parser",
+		Argc:       1,
+		Logic:      versionSetParser,
+	}
+
 	Available["version:file"] = &Command{
 		Identifier: "version:file",
 		Argc:       1,
@@ -34,6 +39,18 @@ func init() {
 	}
 }
 
+func versionSetParser(env *Environment, args ...string) error {
+	expr := args[0]
+
+	if compiled, err := regexp.Compile(expr); err != nil {
+		return err
+	} else {
+		versionFileParser = compiled
+	}
+
+	return nil
+}
+
 func versionFile(env *Environment, args ...string) error {
 	fileName := args[0]
 
@@ -45,7 +62,7 @@ func versionFile(env *Environment, args ...string) error {
 	}
 
 	if matches := versionFileParser.FindStringSubmatch(string(data)); matches == nil {
-		return fmt.Errorf("can't parse version from %s", fileName)
+		return fmt.Errorf("can't parse version from %s with %s", fileName, versionFileParser.String())
 	} else {
 		env.Vars["VERSION_FILE"] = fileName
 		env.Vars["VERSION"] = matches[1]

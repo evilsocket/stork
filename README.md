@@ -10,17 +10,20 @@ You can run a file with `stork -f /path/to/file.stork`, use `stork -h` for a lis
 
 ## Example
 
+This stork script will parse the current version from example_version.go, then ask the user for a new version and update
+this file. It will then push the changes to git and create a new tag with the specified version. The last two lines 
+will build, tag and push the docker image for the project.
+
     #!/usr/bin/env stork -f
-    # parse the current version from this file
     version:file "example_version.go"
-    # ask for a new version and update the file
     version:from_user
-    # with the new version defined, commit if needed and create a new git tag
+
     git:create_tag $VERSION
-    # build the docker image and tag it as 'latest'
+
     docker:build "example/project", ".", "latest"
-    # tag 'latest' with the current version and push it to docker hub
     docker:create_tag "example/project", $VERSION, "latest"
+
+More in the `examples` folder.
 
 ## Commands
 
@@ -37,6 +40,10 @@ Execute a command with the current `$SHELL`.
 Read the current version from the specified file, sets `$VERSION` and `$VERSION_FILE`.
 
 `version:read "<FILE NAME>", "<VAR NAME>"`
+
+`version:parser "<EXPRESSION>"`
+
+Set the regular expression used by `version:file` and `version:read` to parse the version string. Default to `[Vv]ersion\\s*=\\s*['\"]([\\d\\.ab]+)[\"']`.
 
 Read the version from the specified file and sets `$<VAR_NAME>`.
 

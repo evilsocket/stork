@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/evilsocket/islazy/fs"
+	"github.com/evilsocket/islazy/tui"
 	"github.com/evilsocket/stork/commands"
 	"github.com/evilsocket/stork/parser"
 	"os"
@@ -23,7 +24,8 @@ var (
 )
 
 func die(m string, args ...interface{}) {
-	fmt.Printf("error: "+m, args...)
+	prefix := fmt.Sprintf("[%s] ", tui.Red("error"))
+	fmt.Printf(prefix+m, args...)
 	os.Exit(1)
 }
 

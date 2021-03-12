@@ -1,0 +1,3 @@
+version:parser "V\\s*=\\s*['\"]([\\d\\.ab]+)[\"']"
+version:file "example_custom_version.go"
+version:from_user
