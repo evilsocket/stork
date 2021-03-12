@@ -23,55 +23,7 @@ will build, tag and push the docker image for the project.
     docker:build "example/project", ".", "latest"
     docker:create_tag "example/project", $VERSION, "latest"
 
-More in the `examples` folder.
-
-## Commands
-
-### Shell
-
-`shell:do "<COMMAND>"`
-
-Execute a command with the current `$SHELL`.
-
-### Version
-
-`version:file "<FILE NAME>"`
-
-Read the current version from the specified file, sets `$VERSION` and `$VERSION_FILE`.
-
-`version:read "<FILE NAME>", "<VAR NAME>"`
-
-Read a version string from the specified file and sets `$<VAR_NAME>` with it.
-
-`version:parser "<EXPRESSION>"`
-
-Set the regular expression used by `version:file` and `version:read` to parse the version string. Default to `[Vv]ersion\\s*=\\s*['\"]([\\d\\.ab]+)[\"']`.
-
-Read the version from the specified file and sets `$<VAR_NAME>`.
-
-`version:from_user`
-
-Ask the user for a new version, updates `$VERSION` and `$VERSION_FILE` with the new value.
-
-### Git
-
-`git:create_tag $VERSION` or `git:create_tag "<VERSION>"`
-
-Create and push a new git tag.
-
-### Docker
-
-`docker:repository "<REPOSITORY URL>"`
-
-Set the repository URL for pushing docker images.
-
-`docker:build "<IMAGE NAME>", "<PATH>", "<TAG>"`
-
-Build a docker image from a given path and tag it with the specified tag.
-
-`docker:create_tag "<IMAGE NAME>", "<SOURCE TAG>", "<TARGET TAG>"`
-
-Create and push a new tagged image from a source tag.
+More in the `examples` folder. For a complete list of commands [refer to the project wiki](https://github.com/evilsocket/stork/wiki/Commands).
 
 ## License
 
