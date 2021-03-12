@@ -41,6 +41,8 @@ Read the current version from the specified file, sets `$VERSION` and `$VERSION_
 
 `version:read "<FILE NAME>", "<VAR NAME>"`
 
+Read a version string from the specified file and sets `$<VAR_NAME>` with it.
+
 `version:parser "<EXPRESSION>"`
 
 Set the regular expression used by `version:file` and `version:read` to parse the version string. Default to `[Vv]ersion\\s*=\\s*['\"]([\\d\\.ab]+)[\"']`.
