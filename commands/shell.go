@@ -27,6 +27,7 @@ func shellDo(env *Environment, args ...string) error {
 	if env.Dry {
 		fmt.Printf("%s %s -c %s\n", tui.Dim("<dry>"), sh, args[0])
 	} else {
+		msg("shell", "%s\n", args[0])
 		cmd := exec.Command(sh, "-c", args[0])
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
