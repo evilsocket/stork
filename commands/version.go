@@ -103,10 +103,6 @@ func versionFromUser(env *Environment, args ...string) error {
 	versionFile := env.Vars["VERSION_FILE"]
 	version := env.Vars["VERSION"]
 
-	 if version == "" {
-		return fmt.Errorf("VERSION not set")
-	}
-
 	if versionFile != "" {
 		msg("version", "version in %s is %s, enter new version (major.minor.patch): ", versionFile, version)
 	} else if version != "" {
