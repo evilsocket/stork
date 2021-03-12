@@ -28,14 +28,16 @@ func gitCreateTag(env *Environment, args ...string) error {
 		return err
 	}
 
-	// add and push version file in case it was changed
-	msg := fmt.Sprintf("releasing v%s", version)
+	// TODO: create changelog
 
-	fmt.Printf("[git] %s ...\n", msg)
+	// add and push version file in case it was changed
+	txt := fmt.Sprintf("releasing v%s", version)
+
+	msg("git", "%s ...\n", txt)
 
 	if err = do(env.Dry, git, "add", versionFile); err != nil {
 		return err
-	} else if err = do(env.Dry, git, "commit", "-m", msg); err != nil {
+	} else if err = do(env.Dry, git, "commit", "-m", txt); err != nil {
 		return err
 	} else if err = do(env.Dry, git, "push"); err != nil {
 		return err
@@ -43,7 +45,7 @@ func gitCreateTag(env *Environment, args ...string) error {
 
 	// create new tag and push
 	tag := fmt.Sprintf("v%s", version)
-	if err = do(env.Dry, git, "tag", "-a", tag, "-m", msg); err != nil {
+	if err = do(env.Dry, git, "tag", "-a", tag, "-m", txt); err != nil {
 		return err
 	} else if err = do(env.Dry, git, "push", "origin", tag); err != nil {
 		return err

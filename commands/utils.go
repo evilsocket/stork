@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+func msg(who string, format string, args...interface{}) {
+	format = fmt.Sprintf("[%s] %s", tui.Yellow(who), format)
+	fmt.Printf(format, args...)
+}
+
 func do(dry bool, app string, args ...string) error {
 	if dry {
 		fmt.Printf("%s %s %s\n", tui.Dim("<dry>"), app, strings.Join(args, " "))

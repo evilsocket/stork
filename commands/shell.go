@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/evilsocket/islazy/tui"
 	"os"
 	"os/exec"
 )
@@ -24,7 +25,7 @@ func shellDo(env *Environment, args ...string) error {
 	}
 
 	if env.Dry {
-		fmt.Printf("%s -c %s\n", sh, args[0])
+		fmt.Printf("%s %s -c %s\n", tui.Dim("<dry>"), sh, args[0])
 	} else if out, err := exec.Command(sh, "-c", args[0]).Output(); err != nil {
 		return err
 	} else {

@@ -12,7 +12,7 @@ import (
 var (
 	// TODO: make this more versatile
 	versionFileParser = regexp.MustCompile(`[Vv]ersion\s*=\s*['"]([\d\.ab]+)["']`)
-	versionParser = regexp.MustCompile(`\d+\.\d+\.\d+[ab]?`)
+	versionParser = regexp.MustCompile(`\d+\.\d+(\.\d+[ab]?)?`)
 )
 
 func init() {
@@ -20,6 +20,12 @@ func init() {
 		Identifier: "version:file",
 		Argc:       1,
 		Logic:      versionFile,
+	}
+
+	Available["version:read"] = &Command{
+		Identifier: "version:read",
+		Argc:       2,
+		Logic:      versionRead,
 	}
 
 	Available["version:from_user"] = &Command{
@@ -48,6 +54,27 @@ func versionFile(env *Environment, args ...string) error {
 	return nil
 }
 
+func versionRead(env *Environment, args ...string) error {
+	fileName := args[0]
+	varName := args[1]
+
+	// fmt.Printf("reading version from %s\n", fileName)
+
+	data, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return err
+	}
+
+	if matches := versionFileParser.FindStringSubmatch(string(data)); matches == nil {
+		return fmt.Errorf("can't parse version from %s", fileName)
+	} else {
+		env.Vars[varName] = matches[1]
+		msg("version", "detected version %s from %s\n", matches[1], fileName)
+	}
+
+	return nil
+}
+
 func versionFromUser(env *Environment, args ...string) error {
 	versionFile := env.Vars["VERSION_FILE"]
 	version := env.Vars["VERSION"]
@@ -58,7 +85,8 @@ func versionFromUser(env *Environment, args ...string) error {
 		return fmt.Errorf("VERSION not set")
 	}
 
-	fmt.Printf("[v%s] enter new version (major.minor.patch): ", version)
+	msg("version", "version in %s is %s, enter new version (major.minor.patch): ", versionFile, version)
+
 	var newVersion string
 	fmt.Scanln(&newVersion)
 	if versionParser.MatchString(newVersion) == false {

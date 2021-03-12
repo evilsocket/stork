@@ -1,0 +1,13 @@
+shell:do "docker-compose -f docker-compose.yml build"
+
+version:file "core/version.go"
+version:read "zmalware/go/scand/utils/version.go", "SCAND_VERSION"
+version:from_user
+
+git:create_tag $VERSION
+
+docker:repository "zimperium-dockerv2-local.jfrog.io"
+
+docker:create_tag "gpp2_scanner", "latest", $VERSION
+docker:create_tag "gpp2_scand", "latest", $SCAND_VERSION
+docker:create_tag "gpp2_ingestor", "latest", $VERSION

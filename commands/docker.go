@@ -6,11 +6,48 @@ import (
 )
 
 func init() {
+	Available["docker:repository"] = &Command{
+		Identifier: "docker:repository",
+		Argc:       1,
+		Logic:      dockerSetRepo,
+	}
+
+	Available["docker:build"] = &Command{
+		Identifier: "docker:build",
+		Argc:       3,
+		Logic:      dockerBuild,
+	}
+
 	Available["docker:create_tag"] = &Command{
 		Identifier: "docker:create_tag",
-		Argc:       2,
+		Argc:       3,
 		Logic:      dockerCreateTag,
 	}
+}
+
+func dockerSetRepo(env *Environment, args ...string) error {
+	env.Vars["DOCKER_REPOSITORY"] = args[0]
+	return nil
+}
+
+func dockerBuild(env *Environment, args ...string) error {
+	docker, err := exec.LookPath("docker")
+	if err != nil {
+		return err
+	}
+
+	image := args[0]
+	dockerfile := args[1]
+	tag := args[2]
+	tagName := fmt.Sprintf("%s:%s", image, tag)
+
+	msg("docker", "building %s ...\n", tagName)
+
+	if err = do(env.Dry, docker, "build", "-t", tagName, dockerfile); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func dockerCreateTag(env *Environment, args ...string) error {
@@ -20,23 +57,29 @@ func dockerCreateTag(env *Environment, args ...string) error {
 	}
 
 	image := args[0]
-	version := args[1]
-	tagName := fmt.Sprintf("%s:v%s", image, version)
-	latest := fmt.Sprintf("%s:latest", image)
+	srcTag := args[1]
+	version := args[2]
 
-	fmt.Printf("[docker] building %s ...\n", tagName)
+	sourceName := fmt.Sprintf("%s:%s", image, srcTag)
+	remoteSourceName := sourceName
+	targetName := fmt.Sprintf("%s:%s", image, version)
 
-	if err = do(env.Dry, docker, "build", "-t", tagName, "."); err != nil {
-		return err
-	} else if err = do(env.Dry, docker, "tag", tagName, latest); err != nil {
+	if repo := env.Vars["DOCKER_REPOSITORY"]; repo != "" {
+		targetName = fmt.Sprintf("%s/%s", repo, targetName)
+		remoteSourceName = fmt.Sprintf("%s/%s", repo, sourceName)
+	}
+
+	msg("docker", "tagging %s from %s ...\n", targetName, sourceName)
+
+	if err = do(env.Dry, docker, "tag", sourceName, targetName); err != nil {
 		return err
 	}
 
-	fmt.Printf("[doker] pushing %s ...\n", tagName)
+	msg("docker", "pushing %s and %s ...\n", targetName, remoteSourceName)
 
-	if err = do(env.Dry, docker, "push", tagName); err != nil {
+	if err = do(env.Dry, docker, "push", targetName); err != nil {
 		return err
-	} else if err = do(env.Dry, docker, "push", latest); err != nil {
+	} else if err = do(env.Dry, docker, "push", remoteSourceName); err != nil {
 		return err
 	}
 

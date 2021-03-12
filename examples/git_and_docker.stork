@@ -3,4 +3,5 @@ version:from_user
 
 git:create_tag $VERSION
 
-docker:create_tag "example/project", $VERSION
+docker:build "example/project", ".", "latest"
+docker:create_tag "example/project", $VERSION, "latest"
