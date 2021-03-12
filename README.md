@@ -72,3 +72,7 @@ Build a docker image from a given path and tag it with the specified tag.
 `docker:create_tag "<IMAGE NAME>", "<SOURCE TAG>", "<TARGET TAG>"`
 
 Create and push a new tagged image from a source tag.
+
+## License
+
+Released under the GPL3 license.
