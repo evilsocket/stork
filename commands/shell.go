@@ -20,16 +20,19 @@ func init() {
 }
 
 func shellDo(env *Environment, args ...string) error {
-	if  sh == "" {
+	if sh == "" {
 		return fmt.Errorf("$SHELL not defined")
 	}
 
 	if env.Dry {
 		fmt.Printf("%s %s -c %s\n", tui.Dim("<dry>"), sh, args[0])
-	} else if out, err := exec.Command(sh, "-c", args[0]).Output(); err != nil {
-		return err
 	} else {
-		fmt.Print(string(out))
+		cmd := exec.Command(sh, "-c", args[0])
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		if err := cmd.Run(); err != nil {
+			return err
+		}
 	}
 
 	return nil
