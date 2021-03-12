@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/evilsocket/islazy/str"
 	"github.com/evilsocket/islazy/tui"
@@ -111,8 +112,10 @@ func versionFromUser(env *Environment, args ...string) error {
 		msg("version", "enter new version (major.minor.patch): ")
 	}
 
+	reader := bufio.NewReader(os.Stdin)
 	var newVersion string
-	fmt.Scanln(&newVersion)
+	newVersion, _ = reader.ReadString('\n')
+	newVersion = strings.Replace(newVersion, "\n", "", -1)
 	if versionParser.MatchString(newVersion) == false {
 		return fmt.Errorf("'%s' is not a valid version, use the major.minor.patch format", newVersion)
 	}
