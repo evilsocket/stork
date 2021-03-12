@@ -1,0 +1,3 @@
+docker:repository "foobar.jfrog.io"
+
+docker:push "example/project:latest"
