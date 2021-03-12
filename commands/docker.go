@@ -70,9 +70,15 @@ func dockerCreateTag(env *Environment, args ...string) error {
 	}
 
 	msg("docker", "tagging %s from %s ...\n", targetName, sourceName)
-
 	if err = do(env.Dry, docker, "tag", sourceName, targetName); err != nil {
 		return err
+	}
+
+	if sourceName != remoteSourceName {
+		msg("docker", "tagging %s from %s ...\n", remoteSourceName, sourceName)
+		if err = do(env.Dry, docker, "tag", sourceName, remoteSourceName); err != nil {
+			return err
+		}
 	}
 
 	msg("docker", "pushing %s and %s ...\n", targetName, remoteSourceName)
