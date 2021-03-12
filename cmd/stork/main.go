@@ -61,7 +61,17 @@ func main() {
 		die("parsing %s: %v\n", fileName, err)
 	}
 
-	// TODO: pre check that all the command are defined
+	// pre check that all the command are defined
+	for _, step := range theCode.Steps {
+		if step.Command != nil {
+			if _, found := commands.Available[step.Command.Identifier]; !found {
+				die("%s:%v %s undefined command\n",
+					fileName,
+					step.Command.Pos,
+					step.Command.Identifier)
+			}
+		}
+	}
 
 	env := commands.Environment{
 		Vars: make(commands.Variables),
@@ -75,13 +85,7 @@ func main() {
 				env.Vars[step.Set.Identifier[1:]] = value
 			}
 		} else {
-			cmd, found := commands.Available[step.Command.Identifier]
-			if !found {
-				die("%s:%v %s undefined command\n",
-					fileName,
-					step.Command.Pos,
-					step.Command.Identifier)
-			}
+			cmd, _ := commands.Available[step.Command.Identifier]
 
 			if argc := len(step.Command.Parameters); argc != cmd.Argc {
 				die("%s:%v %s requires %d parameters, %d provided\n",
