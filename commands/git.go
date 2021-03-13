@@ -8,6 +8,12 @@ import (
 )
 
 func init() {
+	Available["git:changelog"] = &Command{
+		Identifier: "git:changelog",
+		Argc:       0,
+		Logic:      gitChangelog,
+	}
+
 	Available["git:create_tag"] = &Command{
 		Identifier: "git:create_tag",
 		Argc:       1,
@@ -15,14 +21,7 @@ func init() {
 	}
 }
 
-func gitCreateTag(env *Environment, args ...string) error {
-	versionFile := env.Vars["VERSION_FILE"]
-	version := env.Vars["VERSION"]
-
-	if version == "" {
-		return fmt.Errorf("VERSION not set")
-	}
-
+func gitChangelog(env *Environment, args ...string) error {
 	git, err := exec.LookPath("git")
 	if err != nil {
 		return err
@@ -67,7 +66,7 @@ func gitCreateTag(env *Environment, args ...string) error {
 		return err
 	}
 
-	msg("git", "release changelog:\n\n")
+	msg("git", "changelog:\n\n")
 
 	fmt.Print("Changelog\n===\n\n")
 
@@ -93,6 +92,22 @@ func gitCreateTag(env *Environment, args ...string) error {
 			fmt.Printf("* %s\n", commit)
 		}
 		fmt.Println()
+	}
+
+	return nil
+}
+
+func gitCreateTag(env *Environment, args ...string) error {
+	versionFile := env.Vars["VERSION_FILE"]
+	version := env.Vars["VERSION"]
+
+	if version == "" {
+		return fmt.Errorf("VERSION not set")
+	}
+
+	git, err := exec.LookPath("git")
+	if err != nil {
+		return err
 	}
 
 	// add and push version file in case it was changed

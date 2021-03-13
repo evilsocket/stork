@@ -1,4 +1,8 @@
 #!/usr/bin/env stork -f
+
+# check what changed to best determine the next version
+git:changelog
+
 version:file "cmd/stork/version.go"
 version:from_user
 
