@@ -15,6 +15,9 @@ this file. It will then push the changes to git and create a new tag with the sp
 will build, tag and push the docker image for the project.
 
     #!/usr/bin/env stork -f
+    # check what changed to best determine the next version
+    git:changelog
+
     version:file "example_version.go"
     version:from_user
 
