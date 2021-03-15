@@ -14,14 +14,15 @@ import (
 const defFileName = "release.stork"
 
 var (
-	ctx       = make(map[string]string)
-	fileName  = defFileName
-	workDir   = ""
-	dryRun    = false
+	ctx         = make(map[string]string)
+	fileName    = defFileName
+	code        = ""
+	workDir     = ""
+	dryRun      = false
 	showVersion = false
-	err       = (error)(nil)
-	theParser = (*parser.Parser)(nil)
-	theCode   = (*parser.AST)(nil)
+	err         = (error)(nil)
+	theParser   = (*parser.Parser)(nil)
+	theCode     = (*parser.AST)(nil)
 )
 
 func die(m string, args ...interface{}) {
@@ -32,6 +33,7 @@ func die(m string, args ...interface{}) {
 
 func init() {
 	flag.StringVar(&fileName, "f", fileName, "input .stork file")
+	flag.StringVar(&code, "c", code, "evaluate as code")
 	flag.BoolVar(&dryRun, "dry-run", dryRun, "will print commands instead of executing them")
 	flag.BoolVar(&showVersion, "v", showVersion, "print version and exit")
 }
@@ -44,38 +46,43 @@ func main() {
 		return
 	}
 
-	if fileName, err = filepath.Abs(fileName); err != nil {
-		die("%v\n", err)
-	} else if fs.Exists(fileName) == false {
-		die("%s does not exist\n", fileName)
-	}
-	oldCwd, err := os.Getwd()
-	if err != nil {
-		die("%v\n", err)
-	}
-
-	workDir = filepath.Dir(fileName)
-	if err = os.Chdir(workDir); err != nil {
-		die("%v\n", err)
-	}
-	defer os.Chdir(oldCwd)
-
-	// fmt.Printf("using %s\n", fileName)
-
 	if theParser, err = parser.New(); err != nil {
 		die("%v\n", err)
 	}
 
-	if theCode, err = theParser.ParseFile(fileName); err != nil {
-		die("parsing %s: %v\n", fileName, err)
+	if code == "" {
+		if fileName, err = filepath.Abs(fileName); err != nil {
+			die("%v\n", err)
+		} else if fs.Exists(fileName) == false {
+			die("%s does not exist\n", fileName)
+		}
+		oldCwd, err := os.Getwd()
+		if err != nil {
+			die("%v\n", err)
+		}
+
+		workDir = filepath.Dir(fileName)
+		if err = os.Chdir(workDir); err != nil {
+			die("%v\n", err)
+		}
+		defer os.Chdir(oldCwd)
+
+		// fmt.Printf("using %s\n", fileName)
+
+		if theCode, err = theParser.ParseFile(fileName); err != nil {
+			die("parsing %s: %v\n", fileName, err)
+		}
+	} else {
+		if theCode, err = theParser.ParseCode(code); err != nil {
+			die("parsing %s: %v\n", code, err)
+		}
 	}
 
 	// pre check that all the command are defined
 	for _, step := range theCode.Steps {
 		if step.Command != nil {
 			if _, found := commands.Available[step.Command.Identifier]; !found {
-				die("%s:%v %s undefined command\n",
-					fileName,
+				die("%v %s undefined command\n",
 					step.Command.Pos,
 					step.Command.Identifier)
 			}
@@ -97,8 +104,7 @@ func main() {
 			cmd, _ := commands.Available[step.Command.Identifier]
 
 			if argc := len(step.Command.Parameters); argc != cmd.Argc {
-				die("%s:%v %s requires %d parameters, %d provided\n",
-					fileName,
+				die("%v %s requires %d parameters, %d provided\n",
 					step.Command.Pos,
 					step.Command.Identifier,
 					cmd.Argc,

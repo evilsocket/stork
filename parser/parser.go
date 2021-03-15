@@ -18,6 +18,15 @@ func New() (parser *Parser, err error) {
 	return
 }
 
+func (p *Parser) ParseCode(code string) (*AST, error) {
+	ast := &AST{}
+	err := p.parser.ParseString(code, ast)
+	if err != nil {
+		return nil, err
+	}
+	return ast, nil
+}
+
 func (p *Parser) ParseFile(fileName string) (*AST, error) {
 	ast := &AST{}
 	content, err := ioutil.ReadFile(fileName)
