@@ -29,7 +29,11 @@ func shellDo(env *Environment, args ...string) error {
 	} else {
 		msg("shell", "%s\n", args[0])
 		cmd := exec.Command(sh, "-c", args[0])
-		cmd.Env = env.Vars.AsEnv()
+
+		for _, vEnv := range env.Vars.AsEnv() {
+			cmd.Env = append(cmd.Env, vEnv)
+		}
+
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
 		if err := cmd.Run(); err != nil {
