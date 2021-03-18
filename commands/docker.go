@@ -110,9 +110,9 @@ func dockerCreateTag(env *Environment, args ...string) error {
 
 	if err = do(env.Dry, docker, "push", targetName); err != nil {
 		return err
-	} else if err = do(env.Dry, docker, "push", remoteSourceName); err != nil {
+	} /* else if err = do(env.Dry, docker, "push", remoteSourceName); err != nil {
 		return err
-	}
+	} */
 
 	return nil
 }
