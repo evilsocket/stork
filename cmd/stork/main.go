@@ -31,6 +31,19 @@ func die(m string, args ...interface{}) {
 	os.Exit(1)
 }
 
+func perror(m string, args ...interface{}) {
+	prefix := fmt.Sprintf("[%s] ", tui.Red("error"))
+	fmt.Printf(prefix+m, args...)
+}
+
+func onError(env *commands.Environment, format string, args ...interface{}) {
+	if env.OnError == commands.AbortOnError {
+		die(format, args...)
+	} else {
+		perror(format, args...)
+	}
+}
+
 func init() {
 	flag.StringVar(&fileName, "f", fileName, "input .stork file")
 	flag.StringVar(&code, "c", code, "evaluate as code")
@@ -90,13 +103,14 @@ func main() {
 	}
 
 	env := commands.Environment{
-		Vars: make(commands.Variables),
-		Dry:  dryRun,
+		Vars:    make(commands.Variables),
+		Dry:     dryRun,
+		OnError: commands.AbortOnError,
 	}
 	for _, step := range theCode.Steps {
 		if step.Set != nil {
 			if value, err := step.Set.Value.Resolve(env.Vars); err != nil {
-				die("%v\n", err)
+				onError(&env, "%v\n", err)
 			} else {
 				env.Vars[step.Set.Identifier[1:]] = value
 			}
@@ -104,7 +118,7 @@ func main() {
 			cmd, _ := commands.Available[step.Command.Identifier]
 
 			if argc := len(step.Command.Parameters); argc != cmd.Argc {
-				die("%v %s requires %d parameters, %d provided\n",
+				onError(&env, "%v %s requires %d parameters, %d provided\n",
 					step.Command.Pos,
 					step.Command.Identifier,
 					cmd.Argc,
@@ -116,7 +130,7 @@ func main() {
 			var argv []string
 			for _, param := range step.Command.Parameters {
 				if value, err := param.Resolve(env.Vars); err != nil {
-					die("%v\n", err)
+					onError(&env, "%v\n", err)
 				} else {
 					argv = append(argv, value)
 				}
@@ -125,7 +139,7 @@ func main() {
 			// fmt.Printf("argv: %#v\n", argv)
 
 			if err = cmd.Logic(&env, argv...); err != nil {
-				die("%s: %v\n", cmd.Identifier, err)
+				onError(&env, "%s: %v\n", cmd.Identifier, err)
 			}
 		}
 	}

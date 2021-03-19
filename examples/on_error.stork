@@ -1,0 +1,9 @@
+on_error:continue
+
+shell:do "i should not cause an abort"
+
+on_error:abort
+
+shell:do "i should cause an abort"
+
+shell:do "i should not be executed"
