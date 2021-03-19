@@ -19,14 +19,17 @@ func (v Variables) AsEnv() []string {
 type ErrorHandlingType int
 
 const (
-	AbortOnError    = ErrorHandlingType(0)
-	ContinueOnError = ErrorHandlingType(1)
+	AbortOnError ErrorHandlingType = iota
+	ContinueOnError
+	SuppressErrors
+	LogErrors
 )
 
 type Environment struct {
-	Vars    Variables
-	Dry     bool
-	OnError ErrorHandlingType
+	Vars     Variables
+	Dry      bool
+	OnError  ErrorHandlingType
+	ErrorLog string
 }
 
 type Command struct {

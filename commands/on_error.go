@@ -1,6 +1,5 @@
 package commands
 
-
 func init() {
 	Available["on_error:abort"] = &Command{
 		Identifier: "on_error:abort",
@@ -13,6 +12,18 @@ func init() {
 		Argc:       0,
 		Logic:      setOnErrorContinue,
 	}
+
+	Available["on_error:suppress"] = &Command{
+		Identifier: "on_error:suppress",
+		Argc:       0,
+		Logic:      setOnErrorSuppress,
+	}
+
+	Available["on_error:log"] = &Command{
+		Identifier: "on_error:log",
+		Argc:       1,
+		Logic:      setOnErrorLog,
+	}
 }
 
 func setOnErrorAbort(env *Environment, args ...string) error {
@@ -22,5 +33,16 @@ func setOnErrorAbort(env *Environment, args ...string) error {
 
 func setOnErrorContinue(env *Environment, args ...string) error {
 	env.OnError = ContinueOnError
+	return nil
+}
+
+func setOnErrorSuppress(env *Environment, args ...string) error {
+	env.OnError = SuppressErrors
+	return nil
+}
+
+func setOnErrorLog(env *Environment, args ...string) error {
+	env.OnError = LogErrors
+	env.ErrorLog = args[0]
 	return nil
 }

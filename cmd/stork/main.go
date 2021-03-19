@@ -37,11 +37,28 @@ func perror(m string, args ...interface{}) {
 }
 
 func onError(env *commands.Environment, format string, args ...interface{}) {
-	if env.OnError == commands.AbortOnError {
+	switch env.OnError {
+	case commands.AbortOnError:
 		die(format, args...)
-	} else {
+	case commands.ContinueOnError:
 		perror(format, args...)
+//  case commands.SuppressErrors:
+//  	do nothing :)
+	case commands.LogErrors:
+		perror(format, args...)
+
+		f, err := os.OpenFile(env.ErrorLog, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+		if err != nil {
+			perror("main", "can't open %s for writing: %v", env.ErrorLog, err)
+			return
+		}
+		defer f.Close()
+
+		if _, err = f.WriteString(fmt.Sprintf(format, args...) + "\n"); err != nil {
+			perror("main", "can't write to %s: %v", env.ErrorLog, err)
+		}
 	}
+
 }
 
 func init() {

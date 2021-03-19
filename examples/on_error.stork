@@ -2,6 +2,14 @@ on_error:continue
 
 shell:do "i should not cause an abort"
 
+on_error:suppress
+
+shell:do "you should not see an error now"
+
+on_error:log "errors.log"
+
+shell:do "i'm in errors.log too"
+
 on_error:abort
 
 shell:do "i should cause an abort"
