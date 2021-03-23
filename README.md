@@ -37,6 +37,8 @@ More in the `examples` folder. For a complete list of commands [refer to the pro
 * [shellz](https://github.com/evilsocket/shellz)
 * [islazy](https://github.com/evilsocket/islazy)
 * [joe](https://github.com/evilsocket/joe)
+* [cloudwatcher](https://github.com/Matrix86/cloudwatcher)
+* [driplane](https://github.com/Matrix86/driplane)
 
 ## License
 
