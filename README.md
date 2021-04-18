@@ -40,6 +40,7 @@ More in the `examples` folder. For a complete list of commands [refer to the pro
 * [cloudwatcher](https://github.com/Matrix86/cloudwatcher)
 * [driplane](https://github.com/Matrix86/driplane)
 * [flowdownloader](https://github.com/Matrix86/flowdownloader)
+* [pwnagotchi](https://github.com/evilsocket/pwnagotchi)
 
 ## License
 
